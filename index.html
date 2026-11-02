@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>학습 결과물 리포트</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* 랑이쌤컴퓨터 디자인 가이드 · 색상은 사회 기말고사 대비 앱 팔레트
+   레이아웃: 리포트 헤더 → 과정 탭(분류) → 결과물 카드(주제·내용·이미지/동영상·느낀점·코멘트) */
+:root {
+  --bg: #f3f5f8; --card: #ffffff; --soft: #f7f9fb; --ink: #18233a; --ink-2: #3a4558; --ink-3: #5a6578; --line: #dde2ea;
+  --blue: #2f5fb3; --blue-d: #244c93; --blue-50: #e6eefb; --blue-100: #d3e0f7;
+  --u1: #0f8a6b; --u2: #2f5fb3; --u3: #7a4bb0; --u4: #b85f0c; --u5: #b8325a; --u6: #0b7a93; --u7: #5b6b12; --u8: #a8379a; --u9: #8a6200;
+  --red: #c2412d; --red-50: #fbe9e5;
+  --amber: #b5651d; --amber-50: #fbf0e3; --amber-line: #f1d7b8;
+  --gray-50: #eef1f5; --white: #ffffff; --on-color: #ffffff; --shade: rgba(17,22,31,.9);
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(24,35,58,.04), 0 4px 16px rgba(24,35,58,.06);
+  --font: -apple-system, BlinkMacSystemFont, 'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11161f; --card: #19202c; --soft: #1e2633; --ink: #e6eaf2; --ink-2: #c5ccd8; --ink-3: #9aa5b8; --line: #2b3442;
+  --blue: #7aa2e8; --blue-d: #93b4ee; --blue-50: #1f2b40; --blue-100: #26354f;
+  --u1: #1f8f72; --u2: #3a68b8; --u3: #7d55b0; --u4: #b06414; --u5: #b33d60; --u6: #167f96; --u7: #62721c; --u8: #a2439a; --u9: #8f6a10;
+  --red: #ec7c68; --red-50: #3a1f1a; --amber: #e3a066; --amber-50: #3a2a1a; --amber-line: #5a4026;
+  --gray-50: #222b38; --white: #19202c; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #11161f; --card: #19202c; --soft: #1e2633; --ink: #e6eaf2; --ink-2: #c5ccd8; --ink-3: #9aa5b8; --line: #2b3442;
+  --blue: #7aa2e8; --blue-d: #93b4ee; --blue-50: #1f2b40; --blue-100: #26354f;
+  --u1: #1f8f72; --u2: #3a68b8; --u3: #7d55b0; --u4: #b06414; --u5: #b33d60; --u6: #167f96; --u7: #62721c; --u8: #a2439a; --u9: #8f6a10;
+  --red: #ec7c68; --red-50: #3a1f1a; --amber: #e3a066; --amber-50: #3a2a1a; --amber-line: #5a4026;
+  --gray-50: #222b38; --white: #19202c; color-scheme: dark }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.75;
+  word-break: keep-all; overflow-wrap: anywhere; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+h1, h2, h3 { line-height: 1.35; margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+p { margin: 0; }
+button { font: inherit; }
+a:focus-visible, button:focus-visible, input:focus-visible, video:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+/* 버튼 */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 14px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: .15s; }
+.btn:hover { border-color: var(--blue); color: var(--blue); }
+.btn.primary { background: var(--u2); border-color: var(--u2); color: var(--on-color); }
+.btn.primary:hover { filter: brightness(.92); color: var(--on-color); }
+.btn.dark { background: transparent; color: inherit; border-color: currentColor; opacity: .85; }
+.btn.dark:hover { opacity: 1; color: inherit; border-color: currentColor; }
+
+/* 본문 */
+.report { max-width: 760px; margin: 0 auto; padding-block: 24px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 16px; }
+.report-head { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px;
+  background-image: radial-gradient(600px 200px at 0% 0%, var(--blue-100) 0%, transparent 70%); }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-logo { width: 40px; height: 40px; border-radius: 10px; object-fit: contain; flex: none; background: var(--card); }
+.brand-mark { width: 40px; height: 40px; border-radius: 10px; background: var(--blue); color: var(--on-color); display: grid; place-items: center; font-weight: 800; font-size: 13px; flex: none; }
+.brand-txt { display: flex; flex-direction: column; line-height: 1.15; }
+.brand-txt b { font-size: 16px; }
+.brand-txt b em { font-style: normal; color: var(--u1); }
+.brand-txt span { font-size: 11px; color: var(--ink-3); }
+.report-head h1 { font-size: clamp(22px, 5vw, 28px); font-weight: 800; margin: 14px 0 6px; }
+.meta { color: var(--ink-3); font-size: 14px; display: flex; gap: 4px 14px; flex-wrap: wrap; }
+.meta .num { font-variant-numeric: tabular-nums; }
+
+/* 과정 탭 */
+.tabs { display: flex; gap: 6px; overflow-x: auto; padding: 2px; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink-2); font-size: 14px; font-weight: 700; cursor: pointer; transition: .15s; }
+.tab:hover { border-color: var(--blue); color: var(--blue); }
+.tab[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+
+/* 과정 배너 */
+.course-banner { display: flex; align-items: center; gap: 14px; border-radius: var(--radius); padding: 16px 18px; color: var(--on-color); }
+.course-ic { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,.22); display: grid; place-items: center; font-weight: 800; font-size: 15px; flex: none; }
+.course-banner h2 { font-size: 20px; font-weight: 800; }
+
+/* 결과물 카드 */
+.works { display: grid; gap: 16px; }
+.work { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; display: grid; gap: 14px; min-width: 0; }
+@media (max-width: 560px) { .work { padding: 18px 16px; } }
+.work-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--ink-3); }
+.work h3 { font-size: 20px; font-weight: 800; }
+.work .body { color: var(--ink-2); white-space: pre-line; }
+
+.media { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+.media.one { grid-template-columns: minmax(0,1fr); }
+@media (max-width: 480px) { .media { grid-template-columns: minmax(0,1fr); } }
+.m { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--soft); min-width: 0; position: relative; }
+.m img, .m video { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 10; object-fit: contain; background: var(--gray-50); }
+.m video { background: #000; }
+.m button.zoom { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.m .tag { position: absolute; left: 8px; top: 8px; font-size: 11px; font-weight: 800; padding: 1px 8px; border-radius: 999px; background: var(--shade); color: #fff; pointer-events: none; }
+.m.missing { aspect-ratio: 16 / 10; max-width: 100%; display: grid; place-items: center; text-align: center; padding: 12px; color: var(--ink-3); font-size: 13px; background: var(--gray-50); border-style: dashed; }
+.m.missing b { display: block; color: var(--ink-2); }
+.m.fake-video { aspect-ratio: 16 / 10; max-width: 100%; display: grid; place-items: center; background: #18233a; color: #fff; font-size: 13px; text-align: center; }
+.m.fake-video .play { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,.18); display: grid; place-items: center; margin: 0 auto 6px; font-size: 20px; }
+
+.voice { background: var(--amber-50); border: 1px solid var(--amber-line); border-radius: 12px; padding: 14px 16px; }
+.voice .lb, .comment .lb { display: block; font-size: 12px; font-weight: 800; letter-spacing: .02em; margin-bottom: 4px; }
+.voice .lb { color: var(--amber); }
+.voice p { white-space: pre-line; color: var(--ink); }
+.comment { border-left: 4px solid var(--blue); background: var(--blue-50); border-radius: 0 12px 12px 0; padding: 14px 18px; }
+.comment .lb { color: var(--blue); }
+.comment p { white-space: pre-line; }
+.comment .sign { display: block; text-align: right; font-weight: 700; color: var(--blue); font-size: 14px; margin-top: 6px; }
+
+.empty { text-align: center; padding: 40px 16px; color: var(--ink-3); background: var(--card); border: 1px dashed var(--line); border-radius: var(--radius); }
+.empty b { display: block; color: var(--ink); font-size: 16px; margin-bottom: 4px; }
+.rfoot { text-align: center; font-size: 13px; color: var(--ink-3); margin-top: 8px; }
+
+/* 이미지 크게 보기 */
+.lb-bg { position: fixed; inset: 0; z-index: 100; background: var(--shade); display: grid; grid-template-rows: auto 1fr auto;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)); }
+.lb-top { display: flex; justify-content: space-between; align-items: center; color: #fff; font-size: 14px; gap: 10px; }
+.lb-top span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb-img { min-height: 0; display: grid; place-items: center; padding: 10px 0; }
+.lb-img img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+.lb-nav { display: flex; justify-content: center; gap: 10px; }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg);
+  padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 14px; z-index: 110; max-width: calc(100% - 32px); text-align: center; }
+.toast.err { background: var(--red); color: var(--on-color); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+
+<main class="report" id="app" aria-live="polite">
+  <div class="empty"><b>결과물을 불러오는 중이에요</b>잠시만 기다려 주세요.</div>
+</main>
+
+<div class="lb-bg" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="이미지 크게 보기">
+  <div class="lb-top"><span id="lbCap"></span><button class="btn dark" type="button" id="lbClose">닫기 ✕</button></div>
+  <div class="lb-img"><img id="lbImg" alt=""></div>
+  <div class="lb-nav"><button class="btn dark" type="button" id="lbPrev">← 이전</button><button class="btn dark" type="button" id="lbNext">다음 →</button></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  /* ===== 설정 ===== */
+  var EXCEL_NAME = 'report.xlsx';           // 학생 폴더 안 엑셀 파일 이름
+  var STUDENT_DIR = 's/';                   // 학생 폴더들이 들어 있는 폴더
+  var ACADEMY = '랑이쌤컴퓨터';
+  var IMG_EXT = ['jpg','jpeg','png','gif','webp','bmp','svg'];
+  var VID_EXT = ['mp4','webm','mov','m4v','ogg'];
+  var IS_ADMIN = false;
+    var LOGO = 'logo.png';                   // 폴더 안 로고 이미지 이름
+  var COURSE_COLORS = [
+    [/파워포인트|ppt/i, 'var(--u2)'], [/동영상|영상|프리미어|캡컷/i, 'var(--u5)'], [/파이썬|python/i, 'var(--u6)'],
+    [/엑셀|excel|itq/i, 'var(--u1)'], [/한글|hwp/i, 'var(--u3)'], [/엔트리|스크래치|블록/i, 'var(--u4)'],
+    [/ai|인공지능|챗/i, 'var(--u8)'], [/타자/i, 'var(--u7)']
+  ];
+  var FALLBACK = ['var(--u2)', 'var(--u5)', 'var(--u1)', 'var(--u3)', 'var(--u4)', 'var(--u6)', 'var(--u8)', 'var(--u9)'];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var app = $('app');
+  var state = { data: null, media: null, tab: '전체', gallery: [], gi: 0 };
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function norm(s) { return String(s || '').normalize('NFC').trim().toLowerCase(); }
+  function ext(n) { var m = /\.([a-z0-9]+)$/i.exec(n); return m ? m[1].toLowerCase() : ''; }
+  function toast(msg, err) {
+    var t = document.createElement('div'); t.className = 'toast' + (err ? ' err' : ''); t.textContent = msg;
+    document.body.appendChild(t); setTimeout(function () { t.remove(); }, 2800);
+  }
+
+  /* ===== 엑셀 읽기 ===== */
+  function parseWorkbook(buf) {
+    var wb = XLSX.read(buf, { type: 'array' });
+    var info = { name: '' };
+    var infoSheet = wb.Sheets['학생정보'];
+    if (infoSheet) {
+      XLSX.utils.sheet_to_json(infoSheet, { header: 1, raw: false, defval: '' }).forEach(function (r) {
+        var k = String(r[0]).replace(/\s/g, ''), v = String(r[1] || '').trim();
+        if (k === '학생이름' || k === '이름') info.name = v;
+      });
+    }
+    var ws = wb.Sheets['결과물'] || wb.Sheets[wb.SheetNames.filter(function (n) { return n !== '학생정보' && n !== '작성안내'; })[0]];
+    if (!ws) throw new Error('[결과물] 시트를 찾지 못했어요.');
+    var rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' });
+    var head = (rows.shift() || []).map(function (h) { return String(h).replace(/\(.*?\)/g, '').replace(/\s/g, ''); });
+    var col = function (name) { return head.indexOf(name); };
+    var C = { no: col('순서'), date: col('날짜'), course: col('과정명'), topic: col('주제'), body: col('내용'),
+              feel: col('느낀점'), cmt: col('코멘트'), files: col('파일명') };
+    if (C.course < 0 || C.topic < 0) throw new Error('[결과물] 시트 첫 줄에 "과정명", "주제" 제목이 필요해요.');
+    var get = function (r, i) { return i < 0 ? '' : String(r[i] == null ? '' : r[i]).trim(); };
+    var items = [];
+    rows.forEach(function (r, idx) {
+      var it = { no: parseFloat(get(r, C.no)), date: get(r, C.date), course: get(r, C.course), topic: get(r, C.topic),
+        body: get(r, C.body), feel: get(r, C.feel), cmt: get(r, C.cmt),
+        files: get(r, C.files).split(/[,;\n]+/).map(function (s) { return s.trim(); }).filter(Boolean), row: idx };
+      if (it.course || it.topic) items.push(it);
+    });
+    items.sort(function (a, b) {
+      var an = isNaN(a.no) ? Infinity : a.no, bn = isNaN(b.no) ? Infinity : b.no;
+      return an - bn || a.row - b.row;
+    });
+    return { info: info, items: items };
+  }
+
+  /* ===== 파일 위치 ===== */
+  function mediaFromServer(base) { return function (name) { return { src: base + name.split('/').map(encodeURIComponent).join('/') }; }; }
+  
+  /* ===== 과정 색 ===== */
+  var colorCache = {};
+  function courseColor(name) {
+    if (colorCache[name]) return colorCache[name];
+    var c = null;
+    COURSE_COLORS.some(function (p) { if (p[0].test(name)) { c = p[1]; return true; } return false; });
+    if (!c) c = FALLBACK[Object.keys(colorCache).length % FALLBACK.length];
+    return (colorCache[name] = c);
+  }
+  function courseIcon(name) {
+    var m = /[A-Za-z]{2}/.exec(name); if (m && /^[A-Za-z]/.test(name)) return m[0].toUpperCase();
+    return name.replace(/\s/g, '').slice(0, 2);
+  }
+
+  /* ===== 그리기 ===== */
+  function render() {
+    var d = state.data, info = d.info, items = d.items;
+    var courses = [];
+    items.forEach(function (it) { if (courses.indexOf(it.course) < 0) courses.push(it.course); });
+    if (state.tab !== '전체' && courses.indexOf(state.tab) < 0) state.tab = '전체';
+    var name = info.name || '우리 아이';
+    document.title = name + ' 학습 결과물 · ' + ACADEMY;
+
+    var h = '';
+    h += '<header class="report-head"><div class="brand">' + logoHtml() + '<span class="brand-txt"><b>랑이쌤<em>컴퓨터</em></b><span>학습 결과물 리포트</span></span></div>';
+    h += '<h1>' + esc(name) + '의 학습 결과물</h1><div class="meta">';
+    h += '<span>📚 ' + esc(courses.join(' · ') || '과정 없음') + '</span></div>';
+    h += '</header>';
+
+    if (!items.length) {
+      h += '<div class="empty"><b>아직 올라온 결과물이 없어요</b>준비되는 대로 이 주소에 올려 드릴게요.</div>';
+      app.innerHTML = h + foot(); return;
+    }
+
+    if (courses.length > 1) {
+      h += '<nav class="tabs" role="tablist" aria-label="과정 선택">';
+      h += tabBtn('전체', null);
+      courses.forEach(function (c) { h += tabBtn(c, courseColor(c)); });
+      h += '</nav>';
+    }
+
+    var shown = courses.filter(function (c) { return state.tab === '전체' || state.tab === c; });
+    state.gallery = [];
+    shown.forEach(function (c) {
+      var list = items.filter(function (i) { return i.course === c; });
+      var col = courseColor(c);
+      h += '<section class="works" aria-label="' + esc(c) + '">';
+      h += '<div class="course-banner" style="background:' + col + '"><span class="course-ic">' + esc(courseIcon(c)) + '</span><h2>' + esc(c) + '</h2></div>';
+      list.forEach(function (it) { h += workCard(it, col); });
+      h += '</section>';
+    });
+    app.innerHTML = h + foot();
+  }
+  function tabBtn(label, col) {
+    var sel = state.tab === label;
+    return '<button class="tab" type="button" role="tab" aria-selected="' + sel + '" data-tab="' + esc(label) + '">' +
+      (col ? '<span class="dot" style="background:' + col + '"></span>' : '') + esc(label) + '</button>';
+  }
+  function workCard(it, col) {
+    var h = '<article class="work" style="border-top:4px solid ' + col + '">';
+    if (it.date) h += '<div class="work-top"><span>📅 ' + esc(it.date) + '</span></div>';
+    h += '<h3>' + esc(it.topic || '(주제 없음)') + '</h3>';
+    if (it.body) h += '<p class="body">' + esc(it.body) + '</p>';
+    if (it.files.length) {
+      h += '<div class="media' + (it.files.length === 1 ? ' one' : '') + '">';
+      it.files.forEach(function (f) { h += mediaHtml(f, it.topic); });
+      h += '</div>';
+    }
+    if (it.feel) h += '<div class="voice"><span class="lb">✏️ 학생이 느낀 점</span><p>' + esc(it.feel) + '</p></div>';
+    if (it.cmt) h += '<div class="comment"><span class="lb">💬 선생님 코멘트</span><p>' + esc(it.cmt) + '</p><span class="sign">— 랑이쌤</span></div>';
+    return h + '</article>';
+  }
+  function mediaHtml(f, topic) {
+        var e = ext(f), m = state.media(f);
+    if (!m) return missing(f);
+    if (IMG_EXT.indexOf(e) >= 0) {
+      var g = state.gallery.push({ src: m.src, cap: topic + ' · ' + f }) - 1;
+      return '<div class="m"><button class="zoom" type="button" data-g="' + g + '" aria-label="' + esc(f) + ' 크게 보기"><img src="' + esc(m.src) + '" alt="' + esc(topic) + '" loading="lazy" data-f="' + esc(f) + '"></button></div>';
+    }
+    if (VID_EXT.indexOf(e) >= 0) {
+      return '<div class="m"><span class="tag">동영상</span><video src="' + esc(m.src) + '#t=0.1" controls playsinline preload="metadata" data-f="' + esc(f) + '"></video></div>';
+    }
+    return missing(f, '보여 줄 수 없는 형식이에요');
+  }
+  function missing(f, why) { if (!IS_ADMIN) return ''; return '<div class="m missing"><div><b>' + esc(f) + '</b>' + (why || '파일을 찾지 못했어요') + '</div></div>'; }
+  function logoHtml() {
+    var src = state.logoSrc === undefined ? LOGO : state.logoSrc;
+    if (!src) return '<span class="brand-mark" aria-hidden="true">LOGO</span>';
+    return '<img class="brand-logo" src="' + esc(src) + '" alt="랑이쌤컴퓨터 로고" onerror="this.outerHTML=\'<span class=&quot;brand-mark&quot; aria-hidden=&quot;true&quot;>LOGO</span>\'">';
+  }
+  function foot() { return '<p class="rfoot">© ' + new Date().getFullYear() + ' ' + ACADEMY + ' · 궁금한 점은 학원 카톡으로 편하게 물어봐 주세요.</p>'; }
+
+  /* 서버에서 파일이 없을 때 자리 표시로 바꾸기 */
+  app.addEventListener('error', function (e) {
+    var el = e.target;
+    if ((el.tagName === 'IMG' || el.tagName === 'VIDEO') && el.dataset.f) {
+      var box = el.closest('.m'); if (box) { if (IS_ADMIN) box.outerHTML = missing(el.dataset.f); else box.remove(); }
+    }
+  }, true);
+
+  /* 탭 · 이미지 크게 보기 */
+  app.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-tab]');
+    if (t) { state.tab = t.dataset.tab; render(); try { localStorage.setItem('lr-tab', state.tab); } catch (x) {} return; }
+    var z = e.target.closest('[data-g]');
+    if (z) openLb(+z.dataset.g);
+  });
+  function openLb(i) {
+    if (!state.gallery.length) return;
+    state.gi = (i + state.gallery.length) % state.gallery.length;
+    var g = state.gallery[state.gi];
+    $('lbImg').src = g.src; $('lbImg').alt = g.cap; $('lbCap').textContent = g.cap + '  (' + (state.gi + 1) + '/' + state.gallery.length + ')';
+    $('lightbox').hidden = false; $('lbClose').focus();
+  }
+  function closeLb() { $('lightbox').hidden = true; }
+  $('lbClose').onclick = closeLb;
+  $('lbPrev').onclick = function () { openLb(state.gi - 1); };
+  $('lbNext').onclick = function () { openLb(state.gi + 1); };
+  $('lightbox').addEventListener('click', function (e) { if (e.target === this || e.target.classList.contains('lb-img')) closeLb(); });
+  document.addEventListener('keydown', function (e) {
+    if ($('lightbox').hidden) return;
+    if (e.key === 'Escape') closeLb(); else if (e.key === 'ArrowLeft') openLb(state.gi - 1); else if (e.key === 'ArrowRight') openLb(state.gi + 1);
+  });
+
+    /* ===== 시작: 같은 폴더의 report.xlsx 자동 불러오기 ===== */
+  try { state.tab = localStorage.getItem('lr-tab') || '전체'; } catch (x) {}
+  function start() {
+    function fail(msg) {
+      app.innerHTML = '<header class="report-head"><div class="brand">' + logoHtml() + '<span class="brand-txt"><b>랑이쌤<em>컴퓨터</em></b><span>학습 결과물 리포트</span></span></div></header>' +
+        '<div class="empty"><b>결과물을 불러오지 못했어요</b>' + msg + '</div>' + foot();
+    }
+    var code = '';
+    try { code = (new URLSearchParams(location.search).get('s') || '').trim(); } catch (x) {}
+    if (!/^[A-Za-z0-9_-]{3,40}$/.test(code)) { fail('주소가 올바르지 않아요. 학원에서 받은 주소로 다시 열어 주세요.'); return; }
+    if (typeof XLSX === 'undefined') { fail('인터넷 연결을 확인한 뒤 새로고침해 주세요.'); return; }
+    var base = STUDENT_DIR + encodeURIComponent(code) + '/';
+    fetch(base + EXCEL_NAME, { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('nofile'); return r.arrayBuffer(); })
+      .then(function (buf) { state.data = parseWorkbook(buf); state.media = mediaFromServer(base); render(); })
+      .catch(function () { fail('잠시 후 다시 열어 주세요. 계속 안 보이면 학원으로 알려 주세요.'); });
+  }
+    start();
+})();
+</script>
+</body>
+</html>
