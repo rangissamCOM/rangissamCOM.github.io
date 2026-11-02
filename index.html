@@ -100,6 +100,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, video:focus-visible 
 .m video { background: #000; }
 .m button.zoom { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
 .m .tag { position: absolute; left: 8px; top: 8px; font-size: 11px; font-weight: 800; padding: 1px 8px; border-radius: 999px; background: var(--shade); color: #fff; pointer-events: none; }
+.m .warn-tag { position: absolute; left: 8px; right: 8px; bottom: 8px; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 8px; background: var(--red); color: var(--on-color); pointer-events: none; line-height: 1.4; }
 .m.missing { aspect-ratio: 16 / 10; max-width: 100%; display: grid; place-items: center; text-align: center; padding: 12px; color: var(--ink-3); font-size: 13px; background: var(--gray-50); border-style: dashed; }
 .m.missing b { display: block; color: var(--ink-2); }
 .m.fake-video { aspect-ratio: 16 / 10; max-width: 100%; display: grid; place-items: center; background: #18233a; color: #fff; font-size: 13px; text-align: center; }
@@ -287,12 +288,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, video:focus-visible 
   function mediaHtml(f, topic) {
         var e = ext(f), m = state.media(f);
     if (!m) return missing(f);
+    var warn = (IS_ADMIN && m.caseDiff) ? '<span class="warn-tag">깃허브에서 안 보여요 · 엑셀 ' + esc(f) + ' / 실제 ' + esc(m.real) + '</span>' : '';
     if (IMG_EXT.indexOf(e) >= 0) {
       var g = state.gallery.push({ src: m.src, cap: topic + ' · ' + f }) - 1;
-      return '<div class="m"><button class="zoom" type="button" data-g="' + g + '" aria-label="' + esc(f) + ' 크게 보기"><img src="' + esc(m.src) + '" alt="' + esc(topic) + '" loading="lazy" data-f="' + esc(f) + '"></button></div>';
+      return '<div class="m"><button class="zoom" type="button" data-g="' + g + '" aria-label="' + esc(f) + ' 크게 보기"><img src="' + esc(m.src) + '" alt="' + esc(topic) + '" loading="lazy" data-f="' + esc(f) + '"></button>' + warn + '</div>';
     }
     if (VID_EXT.indexOf(e) >= 0) {
-      return '<div class="m"><span class="tag">동영상</span><video src="' + esc(m.src) + '#t=0.1" controls playsinline preload="metadata" data-f="' + esc(f) + '"></video></div>';
+      return '<div class="m"><span class="tag">동영상</span><video src="' + esc(m.src) + '#t=0.1" controls playsinline preload="metadata" data-f="' + esc(f) + '"></video>' + warn + '</div>';
     }
     return missing(f, '보여 줄 수 없는 형식이에요');
   }
@@ -304,10 +306,26 @@ a:focus-visible, button:focus-visible, input:focus-visible, video:focus-visible 
   }
   function foot() { return '<p class="rfoot">© ' + new Date().getFullYear() + ' ' + ACADEMY + ' · 궁금한 점은 학원 카톡으로 편하게 물어봐 주세요.</p>'; }
 
-  /* 서버에서 파일이 없을 때 자리 표시로 바꾸기 */
+  /* 서버에서 파일을 못 찾으면: 확장자·이름 대소문자를 바꿔 다시 시도 → 그래도 없으면 숨기기 */
+  function nameVariants(f) {
+    var m = /^(.*?)(\.[^.]+)?$/.exec(f), b = m[1], x = m[2] || '';
+    var out = [b + x.toLowerCase(), b + x.toUpperCase(), (b + x).toLowerCase(), (b + x).toUpperCase(), b.toLowerCase() + x.toUpperCase(), b.toUpperCase() + x.toLowerCase()];
+    if (/^\.jpe?g$/i.test(x)) ['.jpg', '.JPG', '.jpeg', '.JPEG'].forEach(function (y) { out.push(b + y); });
+    return out.filter(function (v, i) { return v !== f && out.indexOf(v) === i; });
+  }
   app.addEventListener('error', function (e) {
     var el = e.target;
     if ((el.tagName === 'IMG' || el.tagName === 'VIDEO') && el.dataset.f) {
+      if (!IS_ADMIN && state.base) {
+        if (!el._alts) el._alts = nameVariants(el.dataset.f);
+        var next = el._alts.shift();
+        if (next) {
+          var src = state.base + next.split('/').map(encodeURIComponent).join('/');
+          el.src = el.tagName === 'VIDEO' ? src + '#t=0.1' : src;
+          var g = el.closest('[data-g]'); if (g && state.gallery[+g.dataset.g]) state.gallery[+g.dataset.g].src = src;
+          return;
+        }
+      }
       var box = el.closest('.m'); if (box) { if (IS_ADMIN) box.outerHTML = missing(el.dataset.f); else box.remove(); }
     }
   }, true);
@@ -350,7 +368,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, video:focus-visible 
     var base = STUDENT_DIR + encodeURIComponent(code) + '/';
     fetch(base + EXCEL_NAME, { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error('nofile'); return r.arrayBuffer(); })
-      .then(function (buf) { state.data = parseWorkbook(buf); state.media = mediaFromServer(base); render(); })
+      .then(function (buf) { state.data = parseWorkbook(buf); state.media = mediaFromServer(base); state.base = base; render(); })
       .catch(function () { fail('잠시 후 다시 열어 주세요. 계속 안 보이면 학원으로 알려 주세요.'); });
   }
     start();
